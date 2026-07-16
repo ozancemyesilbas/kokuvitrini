@@ -1,0 +1,1 @@
+export default function ProductVisual({product,large=false}){return <div className={`product-stage ${large?'large':''}`}><div className="product-shadow"/><div className="product-bottle" style={{'--tone':product.color}}><span className="bottle-brand">{product.brand}</span><strong>{product.name}</strong><small>EAU DE PARFUM</small></div></div>}

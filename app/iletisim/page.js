@@ -1,0 +1,5 @@
+import {Mail,MapPin,MessageCircle,Phone} from 'lucide-react';
+import Breadcrumbs from '../../components/Breadcrumbs';
+import {WHATSAPP} from '../../lib/catalog';
+export const metadata={title:'İletişim ve Sipariş Desteği',description:'Koku Vitrini sipariş, ürün ve parfüm seçimi desteği için WhatsApp veya telefon üzerinden bize ulaşın.',alternates:{canonical:'/iletisim'}};
+export default function Page(){return <main><div className="contact-page"><Breadcrumbs items={[{name:'İletişim',url:'/iletisim'}]}/><p className="eyebrow">BİZE ULAŞIN</p><h1>Nasıl yardımcı olabiliriz?</h1><p>Parfüm seçimi, stok bilgisi ve sipariş süreciyle ilgili destek için bize ulaşabilirsiniz.</p><div className="contact-grid"><a href={`https://wa.me/${WHATSAPP}`}><MessageCircle/><h2>WhatsApp</h2><p>Hızlı ürün ve sipariş desteği</p><b>+90 538 285 11 39</b></a><a href="tel:+905382851139"><Phone/><h2>Telefon</h2><p>Hafta içi 10.00–18.00</p><b>+90 538 285 11 39</b></a><div><Mail/><h2>E-posta</h2><p>Sipariş ve iş birliği talepleri</p><b>info@kokuvitrini.com</b></div><div><MapPin/><h2>Gönderim</h2><p>Türkiye geneline gönderim</p><b>İstanbul, Türkiye</b></div></div></div></main>}

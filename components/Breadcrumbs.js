@@ -1,0 +1,2 @@
+import {SITE_URL} from '../lib/catalog';
+export default function Breadcrumbs({items}){const all=[{name:'Ana Sayfa',url:'/'},...items];const schema={"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":all.map((x,i)=>({"@type":"ListItem","position":i+1,"name":x.name,"item":SITE_URL+x.url}))};return <><nav className="breadcrumbs" aria-label="Sayfa yolu">{all.map((x,i)=><span key={x.url}>{i>0&&' / '}<a href={x.url}>{x.name}</a></span>)}</nav><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/></>}

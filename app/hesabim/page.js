@@ -1,0 +1,2 @@
+export const metadata={title:'Hesabım',robots:{index:false,follow:false}};
+export default function Page(){return <main><div className="account-placeholder"><p className="eyebrow">KOKU VİTRİNİ</p><h1>Müşteri hesabı yakında</h1><p>Üyelik sistemi ödeme altyapısıyla birlikte açılacak. Şimdilik sipariş ve stok desteği için WhatsApp üzerinden bize ulaşabilirsiniz.</p><a className="primary-button" href="https://wa.me/905382851139">WhatsApp desteği</a></div></main>}
