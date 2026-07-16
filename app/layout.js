@@ -1,9 +1,12 @@
 import './globals.css';
 import './finder.css';
 import './finder-scroll.css';
+import './enhancements.css';
+import './enhancements-extra.css';
 import StoreProvider from '../components/StoreProvider';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import RouteTracker from '../components/RouteTracker';
 import {SITE_URL} from '../lib/catalog';
 
 export const metadata={
@@ -17,4 +20,4 @@ export const metadata={
  robots:{index:true,follow:true,googleBot:{index:true,follow:true,'max-image-preview':'large','max-snippet':-1,'max-video-preview':-1}},
 };
 
-export default function RootLayout({children}){const schema={"@context":"https://schema.org","@graph":[{"@type":"OnlineStore","@id":`${SITE_URL}/#store`,"name":"Koku Vitrini","url":SITE_URL,"telephone":"+90 538 285 11 39","description":"Seçkin Arap ve niş parfümleri sunan online parfüm mağazası","areaServed":{"@type":"Country","name":"Türkiye"},"currenciesAccepted":"TRY","paymentAccepted":"Havale/EFT","sameAs":[]},{"@type":"WebSite","@id":`${SITE_URL}/#website`,"url":SITE_URL,"name":"Koku Vitrini","inLanguage":"tr-TR","publisher":{"@id":`${SITE_URL}/#store`},"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":`${SITE_URL}/parfumler?q={search_term_string}`},"query-input":"required name=search_term_string"}}]};return <html lang="tr"><body><StoreProvider><Header/>{children}<Footer/></StoreProvider><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/></body></html>}
+export default function RootLayout({children}){const schema={"@context":"https://schema.org","@graph":[{"@type":"OnlineStore","@id":`${SITE_URL}/#store`,"name":"Koku Vitrini","url":SITE_URL,"telephone":"+90 538 285 11 39","description":"Seçkin Arap ve niş parfümleri sunan online parfüm mağazası","areaServed":{"@type":"Country","name":"Türkiye"},"currenciesAccepted":"TRY","paymentAccepted":"Havale/EFT","sameAs":[]},{"@type":"WebSite","@id":`${SITE_URL}/#website`,"url":SITE_URL,"name":"Koku Vitrini","inLanguage":"tr-TR","publisher":{"@id":`${SITE_URL}/#store`},"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":`${SITE_URL}/parfumler?q={search_term_string}`},"query-input":"required name=search_term_string"}}]};return <html lang="tr"><body><StoreProvider><RouteTracker/><Header/>{children}<Footer/></StoreProvider><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/></body></html>}

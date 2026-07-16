@@ -20,6 +20,10 @@ npm run build
 - Erkek, kadın, unisex parfüm ve set koleksiyonları
 - Marka ve ürün detay sayfaları
 - Uygunluk oranıyla çalışan Koku Bulucu
+- Yakın alternatifler ve “neden önerildi?” açıklamaları
+- İki veya üç ürünü yan yana karşılaştırma
+- Favoriler ve son görüntülenen ürünler
+- Excel/CSV üzerinden toplu ürün aktarımı
 - WhatsApp üzerinden sipariş akışı
 - Sitemap, robots.txt, canonical ve yapılandırılmış veriler
 - Mobil uyumlu tasarım
