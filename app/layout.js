@@ -3,6 +3,7 @@ import './finder.css';
 import './finder-scroll.css';
 import './enhancements.css';
 import './enhancements-extra.css';
+import './mobile.css';
 import StoreProvider from '../components/StoreProvider';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
