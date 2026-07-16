@@ -1,5 +1,6 @@
 import './globals.css';
 import './finder.css';
+import './finder-scroll.css';
 import StoreProvider from '../components/StoreProvider';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
