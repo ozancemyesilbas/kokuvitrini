@@ -1,5 +1,5 @@
 'use client';
-import {Heart,Menu,Search,ShoppingBag,X} from 'lucide-react';
+import {Grid2X2,Heart,House,Menu,Search,ShoppingBag,Sparkles,X} from 'lucide-react';
 import {useState} from 'react';
 import {useStore} from './StoreProvider';
 import {products} from '../lib/catalog';
@@ -16,6 +16,13 @@ export default function Header(){
    <nav className={menu?'nav-open':''}><a href="/parfumler">Tüm Parfümler</a><a href="/erkek-parfumleri">Erkek</a><a href="/kadin-parfumleri">Kadın</a><a href="/unisex-parfumler">Unisex</a><a href="/parfum-setleri">Setler</a><a href="/markalar">Markalar</a><a className="finder-nav" href="/koku-bulucu">Koku Bulucu</a><a href="/parfum-rehberi">Rehber</a></nav>
    <div className="header-actions"><button onClick={()=>setSearch(true)} aria-label="Ara"><Search/></button><a href="/favoriler" aria-label="Favorilerim"><Heart/></a><button onClick={()=>setOpen(true)} aria-label="Sepet"><ShoppingBag/><b>{count}</b></button></div>
   </header>
+  <nav className="mobile-dock" aria-label="Mobil hızlı menü">
+   <a href="/"><House/><span>Ana Sayfa</span></a>
+   <a href="/parfumler"><Grid2X2/><span>Parfümler</span></a>
+   <a className="mobile-dock-finder" href="/koku-bulucu"><Sparkles/><span>Koku Bul</span></a>
+   <a href="/favoriler"><Heart/><span>Favoriler</span></a>
+   <button type="button" onClick={()=>setOpen(true)} aria-label={`Sepeti aç, ${count} ürün`}><ShoppingBag/><span>Sepet</span>{count>0&&<b>{count}</b>}</button>
+  </nav>
   {search&&<div className="search-modal"><div className="search-box"><Search/><input autoFocus value={q} onChange={e=>setQ(e.target.value)} placeholder="Parfüm, marka veya koku ailesi ara..."/><button onClick={()=>setSearch(false)} aria-label="Aramayı kapat"><X/></button></div><div className="search-results">{q.length>1&&!results.length&&<p>Aramanızla eşleşen ürün bulunamadı.</p>}{results.map(p=><a key={p.slug} href={`/urun/${p.slug}`}><span className="search-dot" style={{background:p.color}}/><div><b>{p.name}</b><small>{p.brand} · {p.size}</small></div></a>)}</div></div>}
  </>
 }
