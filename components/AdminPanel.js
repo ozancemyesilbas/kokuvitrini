@@ -9,6 +9,7 @@ const emptyProduct={id:null,name:'',slug:'',brand_id:'',category_id:'',gender:'U
 const splitList=value=>(value||'').split(',').map(item=>item.trim()).filter(Boolean);
 const joinList=value=>Array.isArray(value)?value.join(', '):value||'';
 const nullableNumber=value=>value===''||value===null?null:Number(value);
+const clean=value=>String(value??'').trim();
 const productToForm=row=>({...emptyProduct,...row,price:String(row.price??''),old_price:row.old_price===null||row.old_price===undefined?'':String(row.old_price),notes:joinList(row.notes),seasons:joinList(row.seasons),occasions:joinList(row.occasions),product_images:row.product_images||[]});
 
 function Field({label,hint,wide=false,children}){return <label className={`admin-field ${wide?'wide':''}`}><span>{label}</span>{children}{hint&&<small>{hint}</small>}</label>}
@@ -90,11 +91,11 @@ export default function AdminPanel({supabaseUrl='',supabaseKey=''}){
   event.preventDefault();setBusy(true);setError('');const wasEditing=Boolean(form.id);
   try{
    const payload={
-    name:form.name.trim(),slug:slugify(form.slug||form.name),brand_id:form.brand_id||null,category_id:form.category_id||null,gender:form.gender,family:form.family.trim(),size:form.size.trim(),
-    price:Number(form.price||0),old_price:nullableNumber(form.old_price),stock:Number(form.stock||0),badge:form.badge.trim()||null,color:form.color||'#77756d',short_description:form.short_description.trim(),description:form.description.trim(),
-    notes:splitList(form.notes),seasons:splitList(form.seasons),occasions:splitList(form.occasions),intensity:form.intensity,longevity:form.longevity.trim()||null,sillage:form.sillage.trim()||null,
-    sku:form.sku.trim()||null,gtin:form.gtin.trim()||null,mpn:form.mpn.trim()||null,main_image_url:form.main_image_url||null,image_alt:form.image_alt.trim()||null,
-    meta_title:form.meta_title.trim()||null,meta_description:form.meta_description.trim()||null,status:form.status,is_featured:Boolean(form.is_featured),sort_order:Number(form.sort_order||0),
+    name:clean(form.name),slug:slugify(form.slug||form.name||''),brand_id:form.brand_id||null,category_id:form.category_id||null,gender:form.gender,family:clean(form.family),size:clean(form.size),
+    price:Number(form.price||0),old_price:nullableNumber(form.old_price),stock:Number(form.stock||0),badge:clean(form.badge)||null,color:form.color||'#77756d',short_description:clean(form.short_description),description:clean(form.description),
+    notes:splitList(form.notes),seasons:splitList(form.seasons),occasions:splitList(form.occasions),intensity:form.intensity,longevity:clean(form.longevity)||null,sillage:clean(form.sillage)||null,
+    sku:clean(form.sku)||null,gtin:clean(form.gtin)||null,mpn:clean(form.mpn)||null,main_image_url:form.main_image_url||null,image_alt:clean(form.image_alt)||null,
+    meta_title:clean(form.meta_title)||null,meta_description:clean(form.meta_description)||null,status:form.status,is_featured:Boolean(form.is_featured),sort_order:Number(form.sort_order||0),
     published_at:form.status==='published'?(form.published_at||new Date().toISOString()):null
    };
    const result=form.id
