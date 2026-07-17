@@ -3,7 +3,7 @@
 import {useCallback,useEffect,useMemo,useState} from 'react';
 import {Archive,Check,ChevronRight,ImagePlus,KeyRound,LayoutDashboard,LogOut,PackagePlus,Pencil,Plus,RefreshCw,Save,Search,ShieldCheck,Star,Tags,Trash2,UploadCloud,X} from 'lucide-react';
 import {brands as seedBrands,categories as seedCategories,getFinderProfile,products as seedProducts,slugify} from '../lib/catalog';
-import {getSupabaseBrowserClient,isSupabaseConfigured} from '../lib/supabase';
+import {getSupabaseBrowserClient} from '../lib/supabase';
 
 const emptyProduct={id:null,name:'',slug:'',brand_id:'',category_id:'',gender:'Unisex',family:'',size:'100 ML',price:'',old_price:'',stock:0,badge:'',color:'#77756d',short_description:'',description:'',notes:'',seasons:'',occasions:'',intensity:'Orta',longevity:'',sillage:'',sku:'',gtin:'',mpn:'',main_image_url:'',image_alt:'',meta_title:'',meta_description:'',status:'draft',is_featured:false,sort_order:0,product_images:[]};
 const splitList=value=>(value||'').split(',').map(item=>item.trim()).filter(Boolean);
@@ -24,8 +24,9 @@ function SeoScore({form}){
  return <div className="seo-score"><div><span>SEO hazırlığı</span><b>{score}/100</b></div><div className="seo-meter"><i style={{width:`${score}%`}}/></div><ul>{checks.map(([ok,label])=><li className={ok?'done':''} key={label}>{ok?<Check/>:<span/>}{label}</li>)}</ul></div>
 }
 
-export default function AdminPanel(){
- const supabase=useMemo(()=>getSupabaseBrowserClient(),[]);
+export default function AdminPanel({supabaseUrl='',supabaseKey=''}){
+ const isSupabaseConfigured=Boolean(supabaseUrl&&supabaseKey);
+ const supabase=useMemo(()=>getSupabaseBrowserClient(supabaseUrl,supabaseKey),[supabaseUrl,supabaseKey]);
  const [authReady,setAuthReady]=useState(false),[session,setSession]=useState(null),[isAdmin,setIsAdmin]=useState(false);
  const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[authError,setAuthError]=useState('');
  const [active,setActive]=useState('products'),[products,setProducts]=useState([]),[brands,setBrands]=useState([]),[categories,setCategories]=useState([]);
