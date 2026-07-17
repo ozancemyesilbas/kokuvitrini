@@ -39,18 +39,20 @@ export default function AdminPanel({supabaseUrl='',supabaseKey=''}){
 
  const flash=(text,isError=false)=>{if(isError){setError(text);setMessage('')}else{setMessage(text);setError('')}window.setTimeout(()=>{setMessage('');setError('')},5000)};
 
- const loadData=useCallback(async()=>{
+ const loadData=useCallback(async({silent=false}={})=>{
   if(!supabase)return;
-  setBusy(true);
-  const [productResult,brandResult,categoryResult]=await Promise.all([
-   supabase.from('products').select('*,brands(name),categories(name),product_images(*)').order('updated_at',{ascending:false}),
-   supabase.from('brands').select('*').order('sort_order').order('name'),
-   supabase.from('categories').select('*').order('sort_order').order('name')
-  ]);
-  setBusy(false);
-  const firstError=productResult.error||brandResult.error||categoryResult.error;
-  if(firstError){flash(`Veriler alınamadı: ${firstError.message}`,true);return}
-  setProducts(productResult.data||[]);setBrands(brandResult.data||[]);setCategories(categoryResult.data||[]);
+  if(!silent)setBusy(true);
+  try{
+   const [productResult,brandResult,categoryResult]=await Promise.all([
+    supabase.from('products').select('*,brands(name),categories(name),product_images(*)').order('updated_at',{ascending:false}),
+    supabase.from('brands').select('*').order('sort_order').order('name'),
+    supabase.from('categories').select('*').order('sort_order').order('name')
+   ]);
+   const firstError=productResult.error||brandResult.error||categoryResult.error;
+   if(firstError){flash(`Veriler alınamadı: ${firstError.message}`,true);return}
+   setProducts(productResult.data||[]);setBrands(brandResult.data||[]);setCategories(categoryResult.data||[]);
+  }catch(requestError){flash(`Veriler alınamadı: ${requestError.message}`,true)}
+  finally{if(!silent)setBusy(false)}
  },[supabase]);
 
  useEffect(()=>{
@@ -85,21 +87,26 @@ export default function AdminPanel({supabaseUrl='',supabaseKey=''}){
  const editProduct=row=>{setForm(productToForm(row));setActive('products');window.scrollTo({top:0,behavior:'smooth'})};
 
  async function saveProduct(event){
-  event.preventDefault();setBusy(true);setError('');
-  const payload={
-   name:form.name.trim(),slug:slugify(form.slug||form.name),brand_id:form.brand_id||null,category_id:form.category_id||null,gender:form.gender,family:form.family.trim(),size:form.size.trim(),
-   price:Number(form.price||0),old_price:nullableNumber(form.old_price),stock:Number(form.stock||0),badge:form.badge.trim()||null,color:form.color||'#77756d',short_description:form.short_description.trim(),description:form.description.trim(),
-   notes:splitList(form.notes),seasons:splitList(form.seasons),occasions:splitList(form.occasions),intensity:form.intensity,longevity:form.longevity.trim()||null,sillage:form.sillage.trim()||null,
-   sku:form.sku.trim()||null,gtin:form.gtin.trim()||null,mpn:form.mpn.trim()||null,main_image_url:form.main_image_url||null,image_alt:form.image_alt.trim()||null,
-   meta_title:form.meta_title.trim()||null,meta_description:form.meta_description.trim()||null,status:form.status,is_featured:Boolean(form.is_featured),sort_order:Number(form.sort_order||0),
-   published_at:form.status==='published'?(form.published_at||new Date().toISOString()):null
-  };
-  const result=form.id
-   ?await supabase.from('products').update(payload).eq('id',form.id).select('*,brands(name),categories(name),product_images(*)').single()
-   :await supabase.from('products').insert(payload).select('*,brands(name),categories(name),product_images(*)').single();
-  setBusy(false);
-  if(result.error){flash(`Ürün kaydedilemedi: ${result.error.message}`,true);return}
-  setForm(productToForm(result.data));await loadData();flash(form.id?'Ürün güncellendi.':'Ürün oluşturuldu. Şimdi görsellerini yükleyebilirsiniz.');
+  event.preventDefault();setBusy(true);setError('');const wasEditing=Boolean(form.id);
+  try{
+   const payload={
+    name:form.name.trim(),slug:slugify(form.slug||form.name),brand_id:form.brand_id||null,category_id:form.category_id||null,gender:form.gender,family:form.family.trim(),size:form.size.trim(),
+    price:Number(form.price||0),old_price:nullableNumber(form.old_price),stock:Number(form.stock||0),badge:form.badge.trim()||null,color:form.color||'#77756d',short_description:form.short_description.trim(),description:form.description.trim(),
+    notes:splitList(form.notes),seasons:splitList(form.seasons),occasions:splitList(form.occasions),intensity:form.intensity,longevity:form.longevity.trim()||null,sillage:form.sillage.trim()||null,
+    sku:form.sku.trim()||null,gtin:form.gtin.trim()||null,mpn:form.mpn.trim()||null,main_image_url:form.main_image_url||null,image_alt:form.image_alt.trim()||null,
+    meta_title:form.meta_title.trim()||null,meta_description:form.meta_description.trim()||null,status:form.status,is_featured:Boolean(form.is_featured),sort_order:Number(form.sort_order||0),
+    published_at:form.status==='published'?(form.published_at||new Date().toISOString()):null
+   };
+   const result=form.id
+    ?await supabase.from('products').update(payload).eq('id',form.id).select('*,brands(name),categories(name),product_images(*)').single()
+    :await supabase.from('products').insert(payload).select('*,brands(name),categories(name),product_images(*)').single();
+   if(result.error){flash(`Ürün kaydedilemedi: ${result.error.message}`,true);return}
+   setForm(productToForm(result.data));
+   setProducts(current=>wasEditing?current.map(item=>item.id===result.data.id?result.data:item):[result.data,...current]);
+   flash(wasEditing?'Ürün güncellendi.':'Ürün oluşturuldu. Şimdi görsellerini yükleyebilirsiniz.');
+   void loadData({silent:true});
+  }catch(saveError){flash(`Ürün kaydedilemedi: ${saveError.message}`,true)}
+  finally{setBusy(false)}
  }
 
  async function deleteProduct(row){
