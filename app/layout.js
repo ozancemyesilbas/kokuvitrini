@@ -6,6 +6,7 @@ import './enhancements-extra.css';
 import './mobile.css';
 import './gallery.css';
 import './admin.css';
+import './media.css';
 import StoreProvider from '../components/StoreProvider';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
