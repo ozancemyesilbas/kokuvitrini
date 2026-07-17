@@ -1,2 +1,3 @@
 .detail-save-tools{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-top:0;padding:10px 14px}.detail-save-tools>a{display:flex;align-items:center;gap:6px;font-size:9px;color:#61675d}.detail-save-tools>a svg{width:15px}.stock-notify{background:#6b765f;color:white;border-color:#6b765f}.stock-notify:hover{background:#4e5947}
+.no-result button{border:1px solid var(--dark);background:transparent;padding:10px 15px;margin-top:12px;font-size:10px;cursor:pointer}
 @media(max-width:540px){.detail-save-tools{align-items:flex-start;flex-direction:column;gap:8px}}

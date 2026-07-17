@@ -1,13 +1,18 @@
 'use client';
 import {Grid2X2,Heart,House,Menu,Search,ShoppingBag,Sparkles,X} from 'lucide-react';
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
 import {useStore} from './StoreProvider';
 import {products} from '../lib/catalog';
+import {getSupabaseBrowserClient} from '../lib/supabase';
 
 export default function Header(){
  const {count,setOpen}=useStore();
- const [menu,setMenu]=useState(false),[search,setSearch]=useState(false),[q,setQ]=useState('');
- const results=q.length>1?products.filter(p=>(p.name+' '+p.brand+' '+p.family+' '+p.notes.join(' ')).toLocaleLowerCase('tr').includes(q.toLocaleLowerCase('tr'))).slice(0,6):[];
+ const [menu,setMenu]=useState(false),[search,setSearch]=useState(false),[q,setQ]=useState(''),[catalog,setCatalog]=useState(products),[loaded,setLoaded]=useState(false);
+ useEffect(()=>{
+  if(!search||loaded)return;const supabase=getSupabaseBrowserClient();if(!supabase){setLoaded(true);return}
+  supabase.from('products').select('slug,name,family,size,color,notes,brands(name)').eq('status','published').order('is_featured',{ascending:false}).limit(100).then(({data})=>{if(data?.length)setCatalog(data.map(item=>({...item,brand:item.brands?.name||'Koku Vitrini'})));setLoaded(true)});
+ },[search,loaded]);
+ const results=q.length>1?catalog.filter(p=>(p.name+' '+p.brand+' '+p.family+' '+(p.notes||[]).join(' ')).toLocaleLowerCase('tr').includes(q.toLocaleLowerCase('tr'))).slice(0,8):[];
  return <>
   <div className="announcement">Türkiye’nin her yerine hızlı gönderim <span>•</span> Sipariş desteği: +90 538 285 11 39</div>
   <header className="site-header">

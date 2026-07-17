@@ -1,8 +1,23 @@
 import {notFound} from 'next/navigation';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import CatalogGrid from '../../../components/CatalogGrid';
-import {brands,brandBySlug,productsByBrand,SITE_URL} from '../../../lib/catalog';
-export const dynamicParams=false;
-export function generateStaticParams(){return brands.map(b=>({slug:b.slug}))}
-export async function generateMetadata({params}){const {slug}=await params,b=brandBySlug(slug);if(!b)return{};return{title:`${b.name} Parfümleri ve Fiyatları`,description:`${b.name} erkek, kadın ve unisex parfümlerini keşfedin. ${b.copy}`,alternates:{canonical:`/marka/${slug}`}}}
-export default async function Page({params}){const {slug}=await params,b=brandBySlug(slug);if(!b)notFound();const items=productsByBrand(slug);const schema={"@context":"https://schema.org","@type":"CollectionPage","name":`${b.name} Parfümleri`,"url":`${SITE_URL}/marka/${slug}`,"description":b.copy,"mainEntity":{"@type":"ItemList","numberOfItems":items.length,"itemListElement":items.map((p,i)=>({"@type":"ListItem","position":i+1,"url":`${SITE_URL}/urun/${p.slug}`}))}};return <main><div className="collection-hero brand-hero"><Breadcrumbs items={[{name:'Markalar',url:'/markalar'},{name:b.name,url:`/marka/${slug}`}]} /><p className="eyebrow">SEÇKİN PARFÜM EVİ</p><h1>{b.name} Parfümleri</h1><p>{b.copy}</p></div><section className="catalog-section"><CatalogGrid items={items}/></section><section className="seo-copy"><h2>{b.name} Parfüm Seçkisi</h2><p>{b.name} koleksiyonundaki kokuları koku ailesi, kullanım zamanı ve karakterine göre karşılaştırabilirsiniz. Ürün sayfalarındaki nota ve kullanım bilgileri doğru kokuyu daha kolay bulmanıza yardımcı olur.</p></section><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/></main>}
+import {SITE_URL} from '../../../lib/catalog';
+import {getBrands,getProducts} from '../../../lib/catalog-data';
+
+export const dynamic='force-dynamic';
+export const dynamicParams=true;
+
+export async function generateStaticParams(){const brands=await getBrands();return brands.map(brand=>({slug:brand.slug}))}
+
+export async function generateMetadata({params}){
+ const {slug}=await params,brands=await getBrands(),brand=brands.find(item=>item.slug===slug);
+ if(!brand)return{};
+ return {title:brand.metaTitle||`${brand.name} Parfümleri ve Fiyatları`,description:brand.metaDescription||`${brand.name} erkek, kadın ve unisex parfümlerini keşfedin. ${brand.copy}`,alternates:{canonical:`/marka/${slug}`},openGraph:{title:`${brand.name} Parfümleri`,description:brand.copy,url:`/marka/${slug}`}};
+}
+export default async function Page({params}){
+ const {slug}=await params,[brands,products]=await Promise.all([getBrands(),getProducts()]),brand=brands.find(item=>item.slug===slug);
+ if(!brand)notFound();
+ const items=products.filter(product=>product.brandSlug===slug||product.brand===brand.name);
+ const schema={"@context":"https://schema.org","@type":"CollectionPage","name":`${brand.name} Parfümleri`,"url":`${SITE_URL}/marka/${slug}`,"description":brand.copy,"mainEntity":{"@type":"ItemList","numberOfItems":items.length,"itemListElement":items.map((product,index)=>({"@type":"ListItem","position":index+1,"name":`${product.brand} ${product.name}`,"url":`${SITE_URL}/urun/${product.slug}`}))}};
+ return <main><div className="collection-hero brand-hero"><Breadcrumbs items={[{name:'Markalar',url:'/markalar'},{name:brand.name,url:`/marka/${slug}`}]} /><p className="eyebrow">SEÇKİN PARFÜM EVİ</p><h1>{brand.name} Parfümleri</h1><p>{brand.copy}</p></div><section className="catalog-section"><CatalogGrid items={items}/></section><section className="seo-copy"><h2>{brand.name} Parfüm Seçkisi</h2><p>{brand.name} koleksiyonundaki kokuları koku ailesi, kullanım zamanı ve karakterine göre karşılaştırabilirsiniz. Ürün sayfalarındaki nota ve kullanım bilgileri doğru kokuyu daha kolay bulmanıza yardımcı olur.</p></section><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/></main>;
+}

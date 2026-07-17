@@ -1,18 +1,21 @@
 import {ArrowRight,BookOpen,Gift,ShieldCheck,Sparkles,Truck} from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import ProductVisual from '../components/ProductVisual';
-import {brands,categories,products} from '../lib/catalog';
+import {getCatalog} from '../lib/catalog-data';
 
 export const metadata={alternates:{canonical:'/'}};
 
-export default function Home(){
+export const dynamic='force-dynamic';
+
+export default async function Home(){
+ const {products,brands,categories}=await getCatalog();
  const featured=products.slice(0,8);
  const hero=products[0];
  const faq={"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Koku Vitrini’nde hangi parfüm markaları bulunur?","acceptedAnswer":{"@type":"Answer","text":"French Avenue, Afnan, Khadlaj, Lattafa, Rayhaan, Rasasi, Armaf ve Fragrance World gibi seçkin markalar bulunur."}},{"@type":"Question","name":"Doğru parfümü nasıl seçebilirim?","acceptedAnswer":{"@type":"Answer","text":"Koku ailesi, mevsim, kullanım zamanı ve sevdiğiniz notalara göre ürünleri karşılaştırabilir, WhatsApp üzerinden destek alabilirsiniz."}}]};
  return <main>
   <section className="home-hero">
    <div className="hero-copy"><p className="eyebrow">KOKUN, İMZAN OLSUN</p><h1>Sana ait olan<br/><em>kokuyu keşfet.</em></h1><p>Seçkin Arap parfümleri, özgün karakterler ve tende iz bırakan hikâyeler. Doğru kokuyu bulman için özenle seçildi.</p><div className="hero-buttons"><a className="primary-button" href="/koku-bulucu">Kokumu bul <ArrowRight/></a><a className="text-button" href="/parfumler">Koleksiyonu keşfet</a></div><div className="hero-proof"><span><b>8+</b> seçkin marka</span><span><b>WhatsApp</b> koku desteği</span><span><b>1–3 gün</b> hızlı gönderim</span></div></div>
-   <div className="hero-visual"><div className="hero-orbit"/><ProductVisual product={hero} large/><div className="hero-label"><small>VİTRİNİN GÖZDESİ</small><b>{hero.name}</b><span>{hero.brand}</span></div></div>
+   {hero&&<div className="hero-visual"><div className="hero-orbit"/><ProductVisual product={hero} large/><div className="hero-label"><small>VİTRİNİN GÖZDESİ</small><b>{hero.name}</b><span>{hero.brand}</span></div></div>}
   </section>
   <section className="trust-row"><div><Truck/><span><b>Hızlı Gönderim</b><small>1–3 iş gününde kargoda</small></span></div><div><ShieldCheck/><span><b>Güvenli Sipariş</b><small>Kontrollü sipariş süreci</small></span></div><div><Sparkles/><span><b>Özenli Seçki</b><small>Karakterli ve sevilen kokular</small></span></div><div><Gift/><span><b>Hediye Desteği</b><small>Doğru hediyeyi birlikte seçelim</small></span></div></section>
   <section className="finder-home"><div><Sparkles/><p className="eyebrow">AKILLI KOKU EŞLEŞTİRME</p><h2>Notalarını seç,<br/>kokunu birlikte bulalım.</h2><p>Sevdiğin notaları, mevsimi, kullanım ortamını ve bütçeni söyle. Koleksiyonumuzdaki en uygun parfümleri uyum oranıyla sıralayalım.</p><a className="primary-button" href="/koku-bulucu">Koku Bulucu’yu başlat <ArrowRight/></a></div><div className="finder-home-notes"><span>Vanilya</span><span>Amber</span><span>Bergamot</span><span>Odunsu</span><span>Deniz notaları</span><span>Misk</span><i>Senin kokun</i></div></section>
